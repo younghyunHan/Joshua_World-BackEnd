@@ -5,6 +5,7 @@ const mysql = require('mysql'); // mysql 모듈 로드
 // var jwt = require('jsonwebtoken');
 const port = 3000;
 const cors = require('cors');
+
 app.use(cors());
 
 app.use(express.json());
@@ -15,12 +16,20 @@ const conn = {
   host: '127.0.0.1',
   port: '3306',
   user: 'root',
-  password: 'dudgus1670!',
+  password: 'nodejs',
   database: 'study',
 };
 
+const connTwo = {
+  host: '127.0.0.1',
+  port: '3306',
+  user: 'root2',
+  password: 'express',
+  database: 'userInfo',
+};
+
 let connection = mysql.createConnection(conn); // DB 커넥션 생성
-connection.connect(); // DB 접속
+let connectionTWo = mysql.createConnection(connTwo);
 
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
@@ -53,8 +62,17 @@ app.get('/list', (req, res) => {
 });
 
 app.post('/post', (req, res) => {
-  console.log(req.body.content);
-  res.send(`message: SUCCESS`);
+  connection.connect(function (err) {
+    // connection.connect() : DB접속
+    if (err) throw err;
+    console.log('Connected!');
+    var sql = `INSERT INTO board (writer, title, content) VALUES ('','','reackHook')`;
+    connection.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log('1 record inserted');
+      res.send({ message: 'SUCCESS' });
+    });
+  });
 });
 
 app.listen(port, () => {
