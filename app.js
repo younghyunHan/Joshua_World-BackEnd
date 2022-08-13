@@ -62,11 +62,27 @@ app.get('/list', (req, res) => {
 });
 
 app.post('/post', (req, res) => {
+  console.log(req.body);
   connection.connect(function (err) {
     // connection.connect() : DB접속
     if (err) throw err;
     console.log('Connected!');
-    var sql = `INSERT INTO board (writer, title, content) VALUES ('','','reackHook')`;
+    var sql = `INSERT INTO board (writer, title, content) VALUES ('','','${req.body.content.postContent}')`;
+    connection.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log('1 record inserted');
+      res.send({ message: 'SUCCESS' });
+    });
+  });
+});
+
+app.post('/signUp', (req, res) => {
+  console.log(req);
+  connection.connect(function (err) {
+    //  connection.connect() : DB접속
+    if (err) throw err;
+    console.log('Connected!');
+    var sql = `INSERT INTO userInfo (name, passWord) VALUES ('${req.body.name}', '${req.body.passWord}')`;
     connection.query(sql, function (err, result) {
       if (err) throw err;
       console.log('1 record inserted');
