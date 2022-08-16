@@ -1,8 +1,7 @@
 const express = require('express');
 const app = express();
 const mysql = require('mysql'); // mysql 모듈 로드
-// const bcrypt = require('bcrypt');
-// var jwt = require('jsonwebtoken');
+var jwt = require('jsonwebtoken');
 const port = 3000;
 const cors = require('cors');
 
@@ -45,13 +44,13 @@ app.get('/', (req, res) => {
 //   });
 // });
 
-app.get('/api/list', (req, res) => {
-  connection.query('SELECT * from board', function (error, results, fields) {
-    if (error) throw error;
-    res.send(results);
-    // res.render('list', { data: results });
-  });
-});
+// app.get('/api/list', (req, res) => {
+//   connection.query('SELECT * from board', function (error, results, fields) {
+//     if (error) throw error;
+//     res.send(results);
+//     // res.render('list', { data: results });
+//   });
+// });
 
 app.get('/list', (req, res) => {
   connection.query('SELECT * from board', function (error, results, fields) {
@@ -76,18 +75,68 @@ app.post('/post', (req, res) => {
   });
 });
 
+// app.post('/signUp', (req, res) => {
+//   console.log(req);
+//   connection.connect(function (err) {
+//     //  connection.connect() : DB접속
+//     if (err) throw err;
+//     console.log('Connected!');
+//     var sql = `INSERT INTO userInfo (user_id, user_pw, user_name) VALUES ('${req.body.user_id}', '${req.body.user_pw}', '${req.body.user_name}')`;
+//     connection.query(sql, function (err, result) {
+//       if (err) throw err;
+//       console.log('1 record inserted');
+//       res.send({ message: 'SUCCESS' });
+//     });
+//   });
+// });
+
 app.post('/signUp', (req, res) => {
   console.log(req);
   connection.connect(function (err) {
     //  connection.connect() : DB접속
     if (err) throw err;
     console.log('Connected!');
-    var sql = `INSERT INTO userInfo (name, passWord) VALUES ('${req.body.name}', '${req.body.passWord}')`;
-    connection.query(sql, function (err, result) {
-      if (err) throw err;
-      console.log('1 record inserted');
-      res.send({ message: 'SUCCESS' });
-    });
+    connection.query(
+      {
+        sql: `INSERT INTO userInfo (user_id, user_pw, user_name) VALUES = ?, ?, ?`,
+      },
+      ['req.body.user_id', 'req.body.user_pw', 'req.body.user_name'],
+      function (err, result) {
+        if (err) throw err;
+        console.log('1 record inserted');
+        res.send({ message: 'SUCCESS' });
+      }
+    );
+  });
+});
+
+app.post('/signIn', (req, res) => {
+  connection.connect(function (err) {
+    //  connection.connect() : DB접속
+    if (err) throw err;
+    // console.log('Connected!');
+    connection.query(
+      { sql: `SELECT user_id FROM userInfo where user_id=? AND user_pw=?` },
+      [req.body.user_id, req.body.user_pw],
+      function (err, result) {
+        console.log(result);
+        if (err) throw err;
+        let token = jwt.sign(
+          {
+            user_id: req.body.user_id,
+            user_pw: req.body.user_pw, // payload, private claims : 로그인 정보
+          },
+          'secretkey', // 비밀키(서명을 만들 때 사용되는 암호 문자열) -> signature
+          {
+            subject: 'younghyun login jwtToken',
+            expiresIn: '60m',
+            issuer: 'younghyun',
+          } // JWT생성할 때 사용되는 옵션. registered claims
+        );
+        console.log('토큰생성\n', token);
+        res.send({ token: token });
+      }
+    );
   });
 });
 
