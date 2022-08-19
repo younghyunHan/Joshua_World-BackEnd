@@ -46,7 +46,6 @@ app.get('/', (req, res) => {
 app.get('/list', (req, res) => {
   const verify = jwt.verify(req.headers.authorization, 'secretkey');
   connection.query(
-    // `SELECT * FROM board WHERE board.writer = ${verify.id}`,
     { sql: `SELECT * FROM board where board.writer=?` },
     [`${verify.id}`],
     function (error, results, fields) {
@@ -57,36 +56,46 @@ app.get('/list', (req, res) => {
 });
 
 app.post('/post', (req, res) => {
-  connection.connect(function (err) {
-    // connection.connect() : DB접속
-    if (err) throw err;
-    console.log('Connected!');
-    var sql = `INSERT INTO board (writer, title, content) VALUES ('','','${req.body.content.postContent}')`;
-    connection.query(sql, function (err, result) {
+  // connection.connect(function (err) {
+  // // connection.connect() : DB접속
+  // if (err) throw err;
+  // console.log('Connected!');
+  const verify = jwt.verify(req.headers.authorization, 'secretkey');
+  connection.query(
+    {
+      sql: `INSERT INTO board  (writer, title, content) VALUES (?, ?, ?)`,
+    },
+    [
+      `${verify.id}`,
+      `${req.body.content.postTitle}`,
+      `${req.body.content.postContent}`,
+    ],
+    function (err, result) {
       if (err) throw err;
       console.log('1 record inserted');
       res.send({ message: 'SUCCESS' });
-    });
-  });
+    }
+  );
+  // });
 });
 
 app.post('/signUp', (req, res) => {
-  connection.connect(function (err) {
-    //  connection.connect() : DB접속
-    if (err) throw err;
-    console.log('Connected!');
-    connection.query(
-      {
-        sql: `INSERT INTO userInfo (user_id, user_pw, user_name) VALUES = ?, ?, ?`,
-      },
-      ['req.body.user_id', 'req.body.user_pw', 'req.body.user_name'],
-      function (err, result) {
-        if (err) throw err;
-        console.log('1 record inserted');
-        res.send({ message: 'SUCCESS' });
-      }
-    );
-  });
+  // connection.connect(function (err) {
+  //  connection.connect() : DB접속
+  // if (err) throw err;
+  // console.log('Connected!');
+  connection.query(
+    {
+      sql: `INSERT INTO userInfo (user_id, user_pw, user_name) VALUES(?, ?, ?)`,
+    },
+    [`${req.body.user_id}`, `${req.body.user_pw}`, `${req.body.user_name}`],
+    function (err, result) {
+      if (err) throw err;
+      console.log('1 record inserted');
+      res.send({ message: 'SUCCESS' });
+    }
+  );
+  // });
 });
 
 app.post('/signIn', (req, res) => {
