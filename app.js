@@ -99,35 +99,36 @@ app.post('/signUp', (req, res) => {
 });
 
 app.post('/signIn', (req, res) => {
-  connection.connect(function (err) {
-    //  connection.connect() : DB접속
-    if (err) throw err;
-    // console.log('Connected!');
-    connection.query(
-      { sql: `SELECT id FROM userInfo where user_id=? AND user_pw=?` },
-      [req.body.user_id, req.body.user_pw],
-      function (err, result) {
-        if (err) throw err;
-        if (result.length !== 0) {
-          let token = jwt.sign(
-            {
-              id: result[0].id, // payload, private claims : 로그인 정보
-            },
-            'secretkey', // 비밀키(서명을 만들 때 사용되는 암호 문자열) -> signature
-            {
-              subject: 'younghyun login jwtToken',
-              expiresIn: '60m',
-              issuer: 'younghyun',
-            } // JWT생성할 때 사용되는 옵션. registered claims
-          );
-          console.log('토큰생성\n', token);
-          res.send({ token: token });
-        } else {
-          res.send({ message: 'INVALID_USER' });
-        }
+  // connection.connect(function (err) {
+  //  connection.connect() : DB접속
+  // if (err) throw err;
+  // console.log('Connected!');
+  console.log(req.body);
+  connection.query(
+    { sql: `SELECT id FROM userInfo where user_id=? AND user_pw=?` },
+    [req.body.user_id, req.body.user_pw],
+    function (err, result) {
+      if (err) throw err;
+      if (result.length !== 0) {
+        let token = jwt.sign(
+          {
+            id: result[0].id, // payload, private claims : 로그인 정보
+          },
+          'secretkey', // 비밀키(서명을 만들 때 사용되는 암호 문자열) -> signature
+          {
+            subject: 'younghyun login jwtToken',
+            expiresIn: '60m',
+            issuer: 'younghyun',
+          } // JWT생성할 때 사용되는 옵션. registered claims
+        );
+        console.log('토큰생성\n', token);
+        res.send({ token: token });
+      } else {
+        res.send({ message: 'INVALID_USER' });
       }
-    );
-  });
+    }
+  );
+  // });
 });
 
 app.listen(port, () => {
