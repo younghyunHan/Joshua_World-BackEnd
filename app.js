@@ -55,6 +55,34 @@ app.get('/list', (req, res) => {
   );
 });
 
+// app.get('/category', (req, res) => {
+//   const verify = jwt.verify(req.headers.authorization, 'secretkey');
+//   connection.query(
+//     {
+//       sql: `SELECT * FROM board left JOIN category ON board.product_id = category.product_id where board.writer=?`,
+//     },
+//     [`${verify.id}`],
+//     function (error, results, fields) {
+//       if (error) throw error;
+//       res.send(results);
+//     }
+//   );
+// });
+
+app.get('/category', (req, res) => {
+  const verify = jwt.verify(req.headers.authorization, 'secretkey');
+  connection.query(
+    {
+      sql: `SELECT * FROM category where category.writer=?`,
+    },
+    [`${verify.id}`],
+    function (error, results, fields) {
+      if (error) throw error;
+      res.send(results);
+    }
+  );
+});
+
 app.post('/post', (req, res) => {
   // connection.connect(function (err) {
   // // connection.connect() : DB접속
@@ -70,6 +98,7 @@ app.post('/post', (req, res) => {
       `${req.body.content.postTitle}`,
       `${req.body.content.postContent}`,
     ],
+
     function (err, result) {
       if (err) throw err;
       console.log('1 record inserted');
@@ -103,7 +132,7 @@ app.post('/signIn', (req, res) => {
   //  connection.connect() : DB접속
   // if (err) throw err;
   // console.log('Connected!');
-  console.log(req.body);
+
   connection.query(
     { sql: `SELECT id FROM userInfo where user_id=? AND user_pw=?` },
     [req.body.user_id, req.body.user_pw],
