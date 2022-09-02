@@ -83,6 +83,42 @@ app.get('/category', (req, res) => {
   );
 });
 
+app.get('/selectCategory', (req, res) => {
+  const verify = jwt.verify(req.headers.authorization, 'secretkey');
+  const selectedCategory = req.query.category;
+  console.log(selectedCategory);
+
+  connection.query(
+    {
+      sql: `SELECT * FROM board left JOIN category ON board.product_id = category.product_id  where board.writer=? AND category.category =? `,
+    },
+    [`${verify.id}`, `${selectedCategory}`],
+    function (error, results, fields) {
+      if (error) throw error;
+      res.send(results);
+    }
+  );
+});
+
+app.get('/searchData', (req, res) => {
+  // console.log(req);
+  const verify = jwt.verify(req.headers.authorization, 'secretkey');
+  const searchData = req.query.searchData;
+  // console.log(searchData);
+
+  connection.query(
+    {
+      sql: `SELECT * FROM board left JOIN category ON board.product_id = category.product_id  where board.writer=? AND board.title =?`,
+    },
+    [`${verify.id}`, `${searchData}`],
+    function (error, results, fields) {
+      console.log(results);
+      if (error) throw error;
+      res.send(results);
+    }
+  );
+});
+
 app.post('/post', (req, res) => {
   // connection.connect(function (err) {
   // // connection.connect() : DB접속
