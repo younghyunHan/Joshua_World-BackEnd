@@ -1,14 +1,25 @@
 const express = require("express");
 const app = express();
+
 const mysql = require("mysql"); // mysql 모듈 로드
+
 var jwt = require("jsonwebtoken");
+
 const port = 3000;
 const cors = require("cors");
 const { resolveInclude } = require("ejs");
 
+const bodyParser = require("body-parser");
+const multer = require("multer");
+const form_data = multer();
+const path = require("path");
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const conn = {
   // mysql 접속 설정
@@ -68,6 +79,11 @@ app.get("/list", (req, res) => {
 //     }
 //   );
 // });
+const upload = multer({ dest: "uploads/" });
+app.post("/userInfoUpdate", upload.single("image"), (req, res) => {
+  console.log(req.file);
+  console.log(req.body);
+});
 
 app.get("/category", (req, res) => {
   const verify = jwt.verify(req.headers.authorization, "secretkey");
