@@ -9,17 +9,12 @@ const port = 3000;
 const cors = require("cors");
 const { resolveInclude } = require("ejs");
 
-const bodyParser = require("body-parser");
 const multer = require("multer");
-const form_data = multer();
-const path = require("path");
+const upload = multer({ dest: "uploads/" });
 
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
 const conn = {
   // mysql 접속 설정
@@ -32,12 +27,12 @@ const conn = {
 
 let connection = mysql.createConnection(conn); // DB 커넥션 생성
 
-app.engine("html", require("ejs").renderFile);
-app.set("view engine", "ejs");
+// app.engine("html", require("ejs").renderFile);
+// app.set("view engine", "ejs");
 
-app.get("/", (req, res) => {
-  res.render("index.html");
-});
+// app.get("/", (req, res) => {
+//   res.render("index.html");
+// });
 
 app.post("/signUp", (req, res) => {
   // connection.connect(function (err) {
@@ -153,9 +148,8 @@ app.get("/searchData", (req, res) => {
   );
 });
 
-const upload = multer({ dest: "uploads/" });
 app.post("/userInfoUpdate", upload.single("image"), (req, res) => {
-  console.log(req.file);
+  console.log(req.header);
   console.log(req.body);
 });
 
