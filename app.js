@@ -154,7 +154,7 @@ const upload = multer({
   // 서버 디스크에 저장하거나 AWS S3와 같은 외부에 저장합니다.
   // multer-s3나 multer-google-storage와 같은 모듈을 찾아서 활용해봅시다
   storage: multer.diskStorage({
-    //destination은 저장할 경로. 동일 경로 내 uploads에 저장할 것임.
+    // destination은 저장할 경로. 동일 경로 내 uploads에 저장할 것임.
     // uploads 폴더를 생성해 둘 것.
     destination(req, file, cb) {
       cb(null, "uploads/");
