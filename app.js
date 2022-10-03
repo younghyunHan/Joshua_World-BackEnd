@@ -175,9 +175,28 @@ const upload = multer({
   // limit: { fileSize: 5 * 1024 * 2014 },
 });
 
-app.post("/userInfoUpdate", upload.single("image"), (req, res) => {
+app.post("/userInfoUpdate", upload.single("user_img"), (req, res) => {
+  const verify = jwt.verify(req.headers.authorization, "secretkey");
+  console.log(verify);
   console.log(req.file); // 이미지 파일
   console.log(req.body); // 닉네임, 비밀번호
+
+  connection.query(
+    {
+      sql: `UPDATE userInfo SET user_name=?, user_pw=MD5(?), user_img=? where userInfo.id=?`,
+    },
+    [
+      `${req.body.user_name}`,
+      `${req.body.user_pw}`,
+      `${req.file.path}`,
+      `${verify.id}`,
+    ],
+    function (error, results, fields) {
+      if (error) throw error;
+      console.log(results);
+      res.send(results);
+    }
+  );
 });
 
 app.post("/post", (req, res) => {
