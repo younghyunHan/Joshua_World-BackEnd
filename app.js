@@ -11,6 +11,7 @@ const { resolveInclude } = require("ejs");
 
 const multer = require("multer");
 const path = require("path");
+const { isReadable } = require("stream");
 
 app.use(cors());
 
@@ -178,8 +179,8 @@ const upload = multer({
 app.post("/userInfoUpdate", upload.single("user_img"), (req, res) => {
   const verify = jwt.verify(req.headers.authorization, "secretkey");
   console.log(verify);
-  console.log(req.file); // 이미지 파일
-  console.log(req.body); // 닉네임, 비밀번호
+  // console.log(req.file); // 이미지 파일
+  // console.log(req.body); // 닉네임, 비밀번호
 
   connection.query(
     {
@@ -193,8 +194,11 @@ app.post("/userInfoUpdate", upload.single("user_img"), (req, res) => {
     ],
     function (error, results, fields) {
       if (error) throw error;
-      console.log(results);
-      res.send(results);
+      res.send({
+        message: "SUCCESS",
+        user_img: req.file,
+        user_name: req.body.user_name,
+      });
     }
   );
 });
