@@ -18,8 +18,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static("uploads"));
-
 const conn = {
   // mysql 접속 설정
   host: "127.0.0.1",
