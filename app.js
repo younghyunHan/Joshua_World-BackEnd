@@ -11,12 +11,13 @@ const { resolveInclude } = require("ejs");
 
 const multer = require("multer");
 const path = require("path");
-const { isReadable } = require("stream");
 
 app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(express.static("uploads"));
 
 const conn = {
   // mysql 접속 설정
