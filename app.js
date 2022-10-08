@@ -127,6 +127,20 @@ app.get("/category", (req, res) => {
   );
 });
 
+app.get("/userName", (req, res) => {
+  const verify = jwt.verify(req.headers.authorization, "secretkey");
+  connection.query(
+    {
+      sql: `SELECT userInfo.user_name FROM userInfo where userInfo.id=?`,
+    },
+    [`${verify.id}`],
+    function (error, results, fields) {
+      if (error) throw error;
+      res.send(results);
+    }
+  );
+});
+
 app.get("/selectCategory", (req, res) => {
   const verify = jwt.verify(req.headers.authorization, "secretkey");
   const selectedCategory = req.query.category;
