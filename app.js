@@ -89,6 +89,18 @@ app.post("/signIn", (req, res) => {
   // });
 });
 
+// app.get("/userName", (req, res) => {
+//   const verify = jwt.verify(req.headers.authorization, "secretkey");
+//   connection.query(
+//     { sql: `SELECT * FROM userInfo where board.writer=?` },
+//     [`${verify.id}`],
+//     function (error, results, fields) {
+//       if (error) throw error;
+//       res.send(results);
+//     }
+//   );
+// });
+
 app.get("/list", (req, res) => {
   const verify = jwt.verify(req.headers.authorization, "secretkey");
   connection.query(
@@ -122,7 +134,7 @@ app.get("/selectCategory", (req, res) => {
 
   connection.query(
     {
-      sql: `SELECT * FROM board left JOIN category ON board.product_id = category.product_id  where board.writer=? AND category.category =?`,
+      sql: `SELECT board.id, board.title FROM board left JOIN category ON board.product_id = category.product_id  where board.writer=? AND category.category =?`,
     },
     [`${verify.id}`, `${selectedCategory}`],
     function (error, results, fields) {
@@ -153,8 +165,8 @@ app.get("/searchData", (req, res) => {
 
 const upload = multer({
   // storage : 어디에 저장할 것인지
-  // 서버 디스크에 저장하거나 AWS S3와 같은 외부에 저장합니다.
-  // multer-s3나 multer-google-storage와 같은 모듈을 찾아서 활용해봅시다.
+  // 서버 디스크에 저장하거나 AWS S3와 같은 외부에 저장.
+  // multer-s3나 multer-google-storage와 같은 모듈을 찾아서 활용.
   storage: multer.diskStorage({
     // destination은 저장할 경로. 동일 경로 내 uploads에 저장할 것임.
     // uploads 폴더를 생성해 둘 것.
@@ -163,10 +175,10 @@ const upload = multer({
     },
     // filename은 저장할 파일의 이름
     filename(req, file, cb) {
-      // ext는 확장자 명을 말합니다.
+      // ext는 확장자 명을 말함.
       const ext = path.extname(file.originalname);
-      // basename은 파일 이름입니다. 파일 이름 + 현재 시간 + 확장자로 정하겠습니다.
-      // 날짜를 붙이는 건 중복을 피하기 위함입니다.
+      // basename은 파일 이름. 파일 이름 + 현재 시간 + 확장자로 정함.
+      // 날짜를 붙이는 건 중복을 피하기 위함.
       cb(
         null,
         path.basename(file.originalname, ext) + new Date().valueOf() + ext
