@@ -256,7 +256,9 @@ app.post("/post", (req, res) => {
     [
       `${verify.id}`,
       `${req.body.content.postTitle}`,
-      `${req.body.content.postContent}`,
+      `${req.body.content.postThumbnailLink}`,
+      `${req.body.content.postThumbnailImg}`,
+      `${req.body.content.postMainHtml}`,
     ],
 
     function (err, result) {
