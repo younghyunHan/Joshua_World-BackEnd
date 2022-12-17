@@ -89,10 +89,10 @@ app.post("/signIn", (req, res) => {
   // });
 });
 
-// app.get("/userName", (req, res) => {
+// app.get("/list", (req, res) => {
 //   const verify = jwt.verify(req.headers.authorization, "secretkey");
 //   connection.query(
-//     { sql: `SELECT * FROM userInfo where board.writer=?` },
+//     { sql: `SELECT * FROM board where board.writer=?` },
 //     [`${verify.id}`],
 //     function (error, results, fields) {
 //       if (error) throw error;
@@ -101,81 +101,69 @@ app.post("/signIn", (req, res) => {
 //   );
 // });
 
-app.get("/list", (req, res) => {
-  const verify = jwt.verify(req.headers.authorization, "secretkey");
-  connection.query(
-    { sql: `SELECT * FROM board where board.writer=?` },
-    [`${verify.id}`],
-    function (error, results, fields) {
-      if (error) throw error;
-      res.send(results);
-    }
-  );
-});
+// app.get("/category", (req, res) => {
+//   const verify = jwt.verify(req.headers.authorization, "secretkey");
+//   connection.query(
+//     {
+//       sql: `SELECT * FROM category where category.writer=?`,
+//     },
+//     [`${verify.id}`],
+//     function (error, results, fields) {
+//       if (error) throw error;
+//       res.send(results);
+//     }
+//   );
+// });
 
-app.get("/category", (req, res) => {
-  const verify = jwt.verify(req.headers.authorization, "secretkey");
-  connection.query(
-    {
-      sql: `SELECT * FROM category where category.writer=?`,
-    },
-    [`${verify.id}`],
-    function (error, results, fields) {
-      if (error) throw error;
-      res.send(results);
-    }
-  );
-});
+// app.get("/userName", (req, res) => {
+//   const verify = jwt.verify(req.headers.authorization, "secretkey");
+//   connection.query(
+//     {
+//       sql: `SELECT userInfo.user_name FROM userInfo where userInfo.id=?`,
+//     },
+//     [`${verify.id}`],
+//     function (error, results, fields) {
+//       if (error) throw error;
+//       res.send(results);
+//     }
+//   );
+// });
 
-app.get("/userName", (req, res) => {
-  const verify = jwt.verify(req.headers.authorization, "secretkey");
-  connection.query(
-    {
-      sql: `SELECT userInfo.user_name FROM userInfo where userInfo.id=?`,
-    },
-    [`${verify.id}`],
-    function (error, results, fields) {
-      if (error) throw error;
-      res.send(results);
-    }
-  );
-});
+// app.get("/selectCategory", (req, res) => {
+//   const verify = jwt.verify(req.headers.authorization, "secretkey");
+//   const selectedCategory = req.query.category;
+//   console.log(selectedCategory);
 
-app.get("/selectCategory", (req, res) => {
-  const verify = jwt.verify(req.headers.authorization, "secretkey");
-  const selectedCategory = req.query.category;
-  console.log(selectedCategory);
+//   connection.query(
+//     {
+//       sql: `SELECT board.id, board.title FROM board left JOIN category ON board.product_id = category.product_id  where board.writer=? AND category.category =?`,
+//     },
+//     [`${verify.id}`, `${selectedCategory}`],
+//     function (error, results, fields) {
+//       if (error) throw error;
+//       res.send(results);
+//     }
+//   );
+// });
 
-  connection.query(
-    {
-      sql: `SELECT board.id, board.title FROM board left JOIN category ON board.product_id = category.product_id  where board.writer=? AND category.category =?`,
-    },
-    [`${verify.id}`, `${selectedCategory}`],
-    function (error, results, fields) {
-      if (error) throw error;
-      res.send(results);
-    }
-  );
-});
+// app.get("/searchData", (req, res) => {
+//   // console.log(req);
+//   const verify = jwt.verify(req.headers.authorization, "secretkey");
+//   const searchData = req.query.searchData;
+//   // console.log(searchData);
 
-app.get("/searchData", (req, res) => {
-  // console.log(req);
-  const verify = jwt.verify(req.headers.authorization, "secretkey");
-  const searchData = req.query.searchData;
-  // console.log(searchData);
-
-  connection.query(
-    {
-      sql: `SELECT * FROM board left JOIN category ON board.product_id = category.product_id  where board.writer=? AND board.title =?`,
-    },
-    [`${verify.id}`, `${searchData}`],
-    function (error, results, fields) {
-      console.log(results);
-      if (error) throw error;
-      res.send(results);
-    }
-  );
-});
+//   connection.query(
+//     {
+//       sql: `SELECT * FROM board left JOIN category ON board.product_id = category.product_id  where board.writer=? AND board.title =?`,
+//     },
+//     [`${verify.id}`, `${searchData}`],
+//     function (error, results, fields) {
+//       console.log(results);
+//       if (error) throw error;
+//       res.send(results);
+//     }
+//   );
+// });
 
 const upload = multer({
   // storage : 어디에 저장할 것인지
@@ -229,6 +217,31 @@ app.post("/userInfoUpdate", upload.single("user_img"), (req, res) => {
     }
   );
 });
+
+// app.post("/postUpdate", (req, res) => {
+//   // connection.connect(function (err) {
+//   // // connection.connect() : DB접속
+//   // if (err) throw err;
+//   // console.log('Connected!');
+//   const verify = jwt.verify(req.headers.authorization, "secretkey");
+//   connection.query(
+//     {
+//       sql: `INSERT INTO board  (writer, title, content) VALUES (?, ?, ?)`,
+//     },
+//     [
+//       `${verify.id}`,
+//       `${req.body.content.postTitle}`,
+//       `${req.body.content.postContent}`,
+//     ],
+
+//     function (err, result) {
+//       if (err) throw err;
+//       console.log("1 record inserted");
+//       res.send({ message: "SUCCESS" });
+//     }
+//   );
+//   // });
+// });
 
 app.post("/post", (req, res) => {
   // connection.connect(function (err) {
