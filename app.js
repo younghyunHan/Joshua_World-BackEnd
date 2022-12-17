@@ -251,7 +251,7 @@ app.post("/post", (req, res) => {
   const verify = jwt.verify(req.headers.authorization, "secretkey");
   connection.query(
     {
-      sql: `INSERT INTO board  (writer, title, content) VALUES (?, ?, ?)`,
+      sql: `INSERT INTO board (postTitle, postThumbnailLink, postThumbnailImg, postMainHtml) VALUES (?, ?, ?, ?)`,
     },
     [
       `${verify.id}`,
