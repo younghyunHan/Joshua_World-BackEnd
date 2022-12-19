@@ -246,30 +246,31 @@ const upload = multer({
 app.post("/post", upload.single("postThumbnailImg"), (req, res) => {
   const verify = jwt.verify(req.headers.authorization, "secretkey");
   console.log(verify);
-  console.log(req);
-
+  // console.log(req);
   // console.log(req.file); // 이미지 파일
   // console.log(req.body); // postTitle, postThumbnailLink, postMainHtml
 
-  // connection.query(
-  //   {
-  //     sql: `INSERT INTO post (postTitle, postThumbnailLink, postThumbnailImg, postMainHtml) VALUES (?, ?, ?, ?)`,
-  //   },
-  //   [
-  //     `${req.body.user_name}`,
-  //     `${req.body.user_pw}`,
-  //     `${req.file.path}`,
-  //     `${verify.id}`,
-  //   ],
-  //   function (error, results, fields) {
-  //     if (error) throw error;
-  //     res.send({
-  //       message: "SUCCESS",
-  //       user_img: req.file,
-  //       user_name: req.body.user_name,
-  //     });
-  //   }
-  // );
+  connection.query(
+    {
+      sql: `INSERT INTO post (postTitle, postThumbnailLink, postThumbnailImg, postMainHtml) VALUES (?, ?, ?, ?)`,
+    },
+    [
+      `${req.body.postTitle}`,
+      `${req.body.postThumbnailLink}`,
+      `${req.file.path}`,
+      `${req.body.postMainHtml}`,
+    ],
+    function (error, results, fields) {
+      if (error) throw error;
+      res.send({
+        message: "SUCCESS",
+        postTitle: req.body.postTitle,
+        postThumbnailLink: req.body.postThumbnailLink,
+        postThumbnailImg: req.file,
+        postMainHtml: req.body.postMainHtml,
+      });
+    }
+  );
 });
 
 // app.post("/post", (req, res) => {
