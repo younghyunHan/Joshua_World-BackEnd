@@ -89,6 +89,21 @@ app.post("/signIn", (req, res) => {
   // });
 });
 
+app.get("/", (req, res) => {
+  const verify = jwt.verify(req.headers.authorization, "secretkey");
+  console.log(verify);
+  connection.query(
+    {
+      sql: `SELECT post.postTitle, post.postThumbnailLink, post.postThumbnailImg, postMainHtml FROM userInfo left JOIN post ON userInfo.id = post.user_index where userInfo.id=?`,
+    },
+    [`${verify.id}`],
+    function (error, results, fields) {
+      if (error) throw error;
+      res.send(results);
+    }
+  );
+});
+
 // app.get("/list", (req, res) => {
 //   const verify = jwt.verify(req.headers.authorization, "secretkey");
 //   connection.query(
@@ -252,9 +267,10 @@ app.post("/post", upload.single("postThumbnailImg"), (req, res) => {
 
   connection.query(
     {
-      sql: `INSERT INTO post (postTitle, postThumbnailLink, postThumbnailImg, postMainHtml) VALUES (?, ?, ?, ?)`,
+      sql: `INSERT INTO post (user_index, postTitle, postThumbnailLink, postThumbnailImg, postMainHtml) VALUES (?, ?, ?, ?, ?)`,
     },
     [
+      `${verify.id}`,
       `${req.body.postTitle}`,
       `${req.body.postThumbnailLink}`,
       `${req.file.path}`,
@@ -264,10 +280,6 @@ app.post("/post", upload.single("postThumbnailImg"), (req, res) => {
       if (error) throw error;
       res.send({
         message: "SUCCESS",
-        // postTitle: req.body.postTitle,
-        // postThumbnailLink: req.body.postThumbnailLink,
-        // postThumbnailImg: req.file,
-        // postMainHtml: req.body.postMainHtml,
       });
     }
   );
