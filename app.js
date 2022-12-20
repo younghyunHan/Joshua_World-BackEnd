@@ -264,10 +264,10 @@ app.post("/post", upload.single("postThumbnailImg"), (req, res) => {
       if (error) throw error;
       res.send({
         message: "SUCCESS",
-        postTitle: req.body.postTitle,
-        postThumbnailLink: req.body.postThumbnailLink,
-        postThumbnailImg: req.file,
-        postMainHtml: req.body.postMainHtml,
+        // postTitle: req.body.postTitle,
+        // postThumbnailLink: req.body.postThumbnailLink,
+        // postThumbnailImg: req.file,
+        // postMainHtml: req.body.postMainHtml,
       });
     }
   );
